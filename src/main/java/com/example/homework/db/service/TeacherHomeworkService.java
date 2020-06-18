@@ -24,4 +24,18 @@ public interface TeacherHomeworkService {
      */
     List<TeacherHomework> selectAllTeacherHomework();
 
+    /**
+     *
+     * @param teacherHomeworkId
+     * @return
+     */
+    List<TeacherHomework> selectTeacherHomeworkById(long teacherHomeworkId);
+
+    /**
+     *
+     * @param teacherHomeworkId
+     * @return
+     */
+    List<TeacherHomework> selectTeacherHomeworkByTeacherId(long teacherId);
+
 }

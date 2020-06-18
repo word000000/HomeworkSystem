@@ -58,4 +58,20 @@ public class TeacherHomeworkServiceImpl implements TeacherHomeworkService {
        return list;
 
    }
+
+    @Override
+    public List<TeacherHomework> selectTeacherHomeworkById(long teacherHomeworkId){
+        List<TeacherHomework> list= new ArrayList<>();
+        list = teacherHomeworkMapper.selectTeacherHomeworkById(teacherHomeworkId);
+        return list;
+
+    }
+
+    @Override
+    public List<TeacherHomework> selectTeacherHomeworkByTeacherId(long teacherId){
+        List<TeacherHomework> list= new ArrayList<>();
+        list = teacherHomeworkMapper.selectTeacherHomeworkByTId(teacherId);
+        return list;
+
+    }
 }

@@ -73,6 +73,36 @@ public  class StudentHomeworkServiceImpl implements StudentHomeworkService {
     }
 
     @Override
+    public String update(StudentHomework nsh){
+        String respone = "更新成功";
+        List<TeacherHomework> thlist = null;
+        if(userMapper.selectUserById(nsh.getStudentId()).size()==0){
+            return  "当前学生id不存在";
+        }
+        thlist = teacherHomeworkMapper.selectTeacherHomeworkById(nsh.getHomeworkId());
+        if(thlist.size()==0){
+            return  "未发现该作业";
+        }
+        if(nsh.getHomeworkContent().equals("")){
+            return  "作业内容不为空";
+        }
+
+        if(nsh.getUpdateTime().before(thlist.get(0).getCreateTime())){
+            return "作业未开放提交通道";
+        }else if(nsh.getUpdateTime().after(thlist.get(0).getFinalTime())){
+            return "作业已关闭提交通道";
+        }
+        nsh.setCreateTime(thlist.get(0).getCreateTime());
+        nsh.setHomeworkTitle(thlist.get(0).getHomeworkTitle());
+
+        if(studentHomeworkMapper.update(nsh)>0){
+            return respone;
+        }else {
+            return "提交失败";
+        }
+    }
+
+    @Override
     public List<StudentHomework> selectAllStudentHomework() {
         List<StudentHomework> list =null;
         list= studentHomeworkMapper.selectAllStudentHomework();
@@ -92,6 +122,13 @@ public  class StudentHomeworkServiceImpl implements StudentHomeworkService {
     public List<StudentHomework> selectStudentHomeworkByHomeworkId(long homeworkId) {
         List<StudentHomework> list =null;
         list= studentHomeworkMapper.selectStudentHomeworkByhomeworkId(homeworkId);
+        return list;
+    }
+
+    @Override
+    public List<StudentHomework> selectStudentHomeworkByshId(long homeworkId,long studentId) {
+        List<StudentHomework> list =null;
+        list= studentHomeworkMapper.selectStudentHomeworkByshid(homeworkId,studentId);
         return list;
     }
 }

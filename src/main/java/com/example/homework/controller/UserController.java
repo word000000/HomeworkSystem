@@ -65,6 +65,23 @@ public class UserController {
         return dataResponse;
     }
 
+    @RequestMapping("searchbyid")
+    private DataResponse<List<User>> searchByid(@RequestBody Map<String,Object> json){
+        List<User> list = null;
+        DataResponse<List<User>> dataResponse = new DataResponse<>();
+        long userId = Long.valueOf(json.get("userId").toString());
+        try {
+            list = userService.selectById(userId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        dataResponse.setCode(0);
+        dataResponse.setMsg("查询成功");
+        dataResponse.setData(list);
+        return dataResponse;
+    }
+
+
     /**
      * 注册
      * @throws IOException
@@ -93,7 +110,7 @@ public class UserController {
         DataResponse<String> dataResponse = new DataResponse<>();
         String response="";
         long userId = Long.valueOf(json.get("userId").toString());
-        String userPassword = (String) json.get("userPassword");
+        String userPassword = json.get("userPassword").toString();
         try{
             response = userService.login(userId,userPassword);
         }catch (Exception e){

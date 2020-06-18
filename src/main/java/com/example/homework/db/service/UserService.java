@@ -27,9 +27,10 @@ public interface UserService {
     List<User> selectAllTeacher();
     /**
      * 查找所有用户
+     * @param userId
      * @return
      */
-    List<User> selectAllUser();
+    List<User> selectById(long userId);
 
     /**
      * 根据ID来查找用户

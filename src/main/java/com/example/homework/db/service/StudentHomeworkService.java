@@ -21,6 +21,12 @@ public interface StudentHomeworkService {
      */
     String addStudentHomework(StudentHomework nsh);
 
+    /**
+     * 学生提交作业
+     * @param nsh
+     * @return
+     */
+    String update(StudentHomework nsh);
 
     /**
      * 查询所有学生提交的作业记录
@@ -42,5 +48,13 @@ public interface StudentHomeworkService {
      * @return
      */
     List<StudentHomework> selectStudentHomeworkByHomeworkId(long homeworkId);
+
+
+    /**
+     *
+     * @param homeworkId
+     * @return
+     */
+    List<StudentHomework> selectStudentHomeworkByshId(long homeworkId,long studentId);
 
 }

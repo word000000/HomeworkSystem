@@ -56,6 +56,33 @@ public class StudentHomeworkController {
         return dataResponse;
     }
 
+    @RequestMapping("/update")
+    private DataResponse<String> update(@RequestBody Map<String,Object> json){
+        DataResponse<String> dataResponse = new DataResponse<>();
+        StudentHomework nsh = new StudentHomework();
+
+        long studentId = Long.valueOf(json.get("studentId").toString());
+        long homeworkId = Long.valueOf(json.get("homeworkId").toString());
+        String homeworkContent = json.get("homeworkContent").toString();
+
+        nsh.setStudentId(studentId);
+        nsh.setHomeworkId(homeworkId);
+        nsh.setHomeworkContent(homeworkContent);
+
+        Timestamp dateNow = new Timestamp(System.currentTimeMillis());
+        nsh.setUpdateTime(dateNow);
+        String response = null;
+        try {
+            response = studentHomeworkService.update(nsh);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        dataResponse.setCode(1);
+        dataResponse.setMsg("成功");
+        dataResponse.setData(response);
+        return dataResponse;
+    }
+
     /**
      *
      * @param json
@@ -84,6 +111,19 @@ public class StudentHomeworkController {
         StudentHomework nsh = new StudentHomework();
         long homeworkId = Long.valueOf(json.get("homeworkId").toString());
         List<StudentHomework> list = studentHomeworkService.selectStudentHomeworkByHomeworkId(homeworkId);
+        dataResponse.setCode(1);
+        dataResponse.setMsg("成功");
+        dataResponse.setData(list);
+        return dataResponse;
+    }
+
+    @RequestMapping("/byshid")
+    private DataResponse<List<StudentHomework>> selectBySHId(@RequestBody Map<String,Object> json){
+        DataResponse<List<StudentHomework>> dataResponse = new DataResponse<>();
+        StudentHomework nsh = new StudentHomework();
+        long homeworkId = Long.valueOf(json.get("homeworkId").toString());
+        long studentId = Long.valueOf(json.get("studentId").toString());
+        List<StudentHomework> list = studentHomeworkService.selectStudentHomeworkByshId(homeworkId,studentId);
         dataResponse.setCode(1);
         dataResponse.setMsg("成功");
         dataResponse.setData(list);

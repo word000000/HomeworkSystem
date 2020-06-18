@@ -18,7 +18,7 @@ import java.util.List;
  */
 public interface TeacherHomeworkMapper {
     @Insert("INSERT INTO teacher_homework(homework_id,teacher_id,homework_title,homework_require,create_time,final_time)" +
-            "VALUES (#{homeworkId},#{teacherId},#{homeworkTitle},#{homeworkRequire},#{homeworkRequire},#{createTime},#{finalTime})")
+            "VALUES (#{homeworkId},#{teacherId},#{homeworkTitle},#{homeworkRequire},#{createTime},#{finalTime})")
     int addTeacherHomework(TeacherHomework teacherHomework);
 
     @Select("SELECt * from teacher_homework")
@@ -43,5 +43,17 @@ public interface TeacherHomeworkMapper {
 
     })
     List<TeacherHomework> selectTeacherHomeworkById(long id);
+
+    @Select("SELECt * from teacher_homework where teacher_id = #{teacherId}")
+    @Results(id = "teacherhomeworkbytID", value={
+            @Result(property = "homeworkId",column = "homework_id",javaType = long.class),
+            @Result(property = "teacherId",column = "teacher_id",javaType = long.class),
+            @Result(property = "homeworkTitle",column = "homework_title",javaType = String.class),
+            @Result(property = "homeworkRequire",column = "homework_require",javaType = String.class),
+            @Result(property = "createTime",column = "create_time",javaType = Timestamp.class),
+            @Result(property =  "finalTime",column = "final_time",javaType=Timestamp.class)
+
+    })
+    List<TeacherHomework> selectTeacherHomeworkByTId(long teacherId);
 
 }

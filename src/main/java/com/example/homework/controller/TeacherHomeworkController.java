@@ -2,6 +2,7 @@ package com.example.homework.controller;
 
 
 
+import com.example.homework.core.DateUtils1;
 import com.example.homework.core.response.DataResponse;
 import com.example.homework.db.model.StudentHomework;
 import com.example.homework.db.model.TeacherHomework;
@@ -16,6 +17,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +31,7 @@ import java.util.Map;
  * @Description:
  * @Modifyed_By:
  */
-@RequestMapping("/")
+@RequestMapping("/teacherhomework")
 @RestController
 @ComponentScan("com.example.homework.*")
 public class TeacherHomeworkController {
@@ -37,38 +42,49 @@ public class TeacherHomeworkController {
     TeacherHomeworkService teacherHomeworkService;
     @Autowired
     StudentHomeworkService studentHomeworkService;
-    /**
-     *跳转界面 发布作业
-     */
-    @RequestMapping("addHomework")
-    private String addHomework(HttpServletRequest req, HttpServletResponse resp) throws SQLException {
-        List<TeacherHomework> teacherHomeworkList = null;
-        try {
-            teacherHomeworkList = teacherHomeworkService.selectAllTeacherHomework();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        req.setAttribute("teacherhomeworklist",teacherHomeworkList);
-        return "/addhomework.jsp";
-    }
-
-
 
 
     /**
      * 教师发布作业
      * @throws IOException
      */
-    @RequestMapping("createHomework")
-    private DataResponse<String> createHomework(@RequestBody TeacherHomework homework) {
-        DataResponse<String> response = new DataResponse<>();
-        System.out.println();
+    @RequestMapping("/createhomework")
+    private DataResponse<String> createHomework(@RequestBody Map<String,Object> json) {
+        DataResponse<String> dataResponse = new DataResponse<>();
+        String response="";
+        TeacherHomework teacherHomework = new TeacherHomework();
+        long teacherId = Long.valueOf(json.get("teacherId").toString());
+        String homeworkTitle = json.get("homeworkTitle").toString();
+        String homeworkRequire = json.get("homeworkRequire").toString();
+        Timestamp createTime = new Timestamp(System.currentTimeMillis());
+        Timestamp finalTime;
         try {
-            response.setData(teacherHomeworkService.createHomework(homework));
+            String finalTime1= DateUtils1.dealDateFormat(json.get("finalTime").toString());
+            finalTime = Timestamp.valueOf(finalTime1);
+        }catch (Exception e){
+            e.printStackTrace();
+            dataResponse.setCode(2);
+            dataResponse.setMsg("失败");
+            dataResponse.setData("时间格式不对");
+            return dataResponse;
+        }
+
+
+        teacherHomework.setTeacherId(teacherId);
+        teacherHomework.setHomeworkTitle(homeworkTitle);
+        teacherHomework.setHomeworkRequire(homeworkRequire);
+        teacherHomework.setCreateTime(createTime);
+        teacherHomework.setFinalTime(finalTime);
+
+        try {
+            response=teacherHomeworkService.createHomework(teacherHomework);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return response;
+        dataResponse.setCode(1);
+        dataResponse.setMsg("成功");
+        dataResponse.setData(response);
+        return dataResponse;
     }
 
 
@@ -77,20 +93,64 @@ public class TeacherHomeworkController {
      * 跳转界面 查看作业记录
      * @return
      */
-    @RequestMapping("searchallhomework")
-    private Map<String,Object> searchAllHomework(){
-        Map<String,Object> map = new HashMap<>(2);
-        List<StudentHomework> studentHomeworkList = null;
+    @RequestMapping("/searchallhomework")
+    private DataResponse<List<TeacherHomework>> searchAllHomework(){
+        DataResponse<List<TeacherHomework>> dataResponse = new DataResponse<>();
         List<TeacherHomework> teacherHomeworkList = null;
-
         try {
-            studentHomeworkList = studentHomeworkService.selectAllStudentHomework();
             teacherHomeworkList = teacherHomeworkService.selectAllTeacherHomework();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        map.put("studenthomework",studentHomeworkList);
+        dataResponse.setCode(1);
+        dataResponse.setMsg("成功");
+        dataResponse.setData(teacherHomeworkList);
+        return dataResponse;
+    }
+
+    /**
+     * 跳转界面 查看作业记录
+     * @return
+     */
+    @RequestMapping("/searchbyteacherid")
+    private DataResponse<List<TeacherHomework>> searchHomeworkByTeacherId(@RequestBody Map<String,Object> json){
+        DataResponse<List<TeacherHomework>> dataResponse = new DataResponse<>();
+        long teacherId = Long.valueOf(json.get("teacherId").toString());
+        List<TeacherHomework> teacherHomeworkList = null;
+        try {
+            teacherHomeworkList = teacherHomeworkService.selectTeacherHomeworkByTeacherId(teacherId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        dataResponse.setCode(1);
+        dataResponse.setMsg("成功");
+        dataResponse.setData(teacherHomeworkList);
+        return dataResponse;
+    }
+
+
+    /**
+     *
+     * @return
+     */
+    @RequestMapping("/gethomeworkstatement")
+    private DataResponse<Map<String,Object>> searchAllHomework(@RequestBody Map<String,Object> json){
+        DataResponse<Map<String,Object>> dataResponse = new DataResponse<>();
+        List<TeacherHomework> teacherHomeworkList = null;
+        long homeworkId=Long.valueOf(json.get("homeworkId").toString());
+        List<StudentHomework> studentHomeworkList = null;
+        Map<String,Object> map = new HashMap<>();
+        try {
+            teacherHomeworkList = teacherHomeworkService.selectTeacherHomeworkById(homeworkId);
+            studentHomeworkList = studentHomeworkService.selectStudentHomeworkByHomeworkId(homeworkId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         map.put("teacherhomework",teacherHomeworkList);
-        return map;
+        map.put("studenthomework",studentHomeworkList);
+        dataResponse.setCode(1);
+        dataResponse.setMsg("成功");
+        dataResponse.setData(map);
+        return dataResponse;
     }
 }
