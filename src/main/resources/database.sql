@@ -1,3 +1,5 @@
+create database homework;
+
 create table student_homework(
     id bigint(20) auto_increment primary key,
     homework_id bigint(20),
