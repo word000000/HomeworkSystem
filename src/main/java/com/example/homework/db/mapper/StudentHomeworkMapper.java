@@ -3,6 +3,7 @@ package com.example.homework.db.mapper;
 
 import com.example.homework.db.model.StudentHomework;
 import org.apache.ibatis.annotations.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.List;
  * @Modifyed_By:
  */
 public interface StudentHomeworkMapper {
+
 
     @Select("SELECT * FROM student_homework")
     @Results(id = "studentAllHomework",value = {

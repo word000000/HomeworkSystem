@@ -71,7 +71,7 @@ public class StudentHomeworkController {
 
         Timestamp dateNow = new Timestamp(System.currentTimeMillis());
         nsh.setUpdateTime(dateNow);
-        String response = null;
+        String response = "";
         try {
             response = studentHomeworkService.update(nsh);
         } catch (Exception e) {

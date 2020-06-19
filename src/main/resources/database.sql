@@ -11,6 +11,7 @@ create table student_homework(
 #user_type 0是学生 1是教师
 create table user(
     user_id bigint(20) primary key,
+    user_name varchar(20),
     user_password varchar(20),
     user_type int
     );
